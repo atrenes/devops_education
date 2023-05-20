@@ -16,6 +16,21 @@ services:
       start_period: 30s
     command: ["--replSet", "dbrs", "--bind_ip_all"]
 
+  mongo_target:
+    image: mongo:4.4
+    hostname: mongodb
+    restart: always
+    container_name: mongo_target
+    ports:
+      - "27018:27017"
+    networks:
+      - mongo-network
+    healthcheck:
+      test: test $$(echo "rs.initiate().ok || rs.status().ok" | mongo -u mongo -p mongo --quiet) -eq 1
+      interval: 10s
+      start_period: 30s
+    command: [ "--replSet", "dbrs", "--bind_ip_all" ]
+
   zookeeper:
     image: confluentinc/cp-zookeeper:7.3.2
     container_name: zookeeper
