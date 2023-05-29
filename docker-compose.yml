@@ -2,76 +2,36 @@ version: '3.4'
 
 services:
   mongo_source:
-    image: mongo:4.4
-    hostname: mongodb
-    restart: always
     container_name: mongo_source
-    ports:
-      - "27017:27017"
+    image: mongo:4.4
+    volumes:
+      - ./scripts/rs-init.sh:/scripts/rs-init.sh
+      - ./scripts/init.js:/scripts/init.js
     networks:
       - mongo-network
-#    environment:
-#      - MONGODB_USER=mongo
-#      - MONGODB_PASSWORD=mongo
-#      - MONGO_INITDB_DATABASE=test
-
-#      - MONGO_INITDB_ROOT_USERNAME=mongo
-#      - MONGO_INITDB_ROOT_PASSWORD=mongo
-#      - MONGO_INITDB_DATABASE=test
-    healthcheck:
-      test: test $$(echo "rs.initiate().ok || rs.status().ok" | mongo --quiet) -eq 1
-      interval: 10s
-      start_period: 30s
-    command: [ "mongod", "--noauth", "--replSet", "dbrs", "--bind_ip_all" ]
-    volumes:
-      - ./source-data-source:/data/db
-      - ./scripts/mongo_source/init/:/docker-entrypoint-initdb.d
-      - ./scripts/mongo_source/init:/home/mongodb
-      - ./scripts/mongo_source/seed/:/home/mongodb/seed
-      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    ports:
+      - 27017:27017
+    depends_on:
+      - mongo_target
+    links:
+      - mongo_target
+    restart: always
+    entrypoint: [ "/usr/bin/mongod", "--bind_ip_all", "--replSet", "dbrs" ]
 
   mongo_target:
-    image: mongo:4.4
-    hostname: mongodb
-    restart: always
     container_name: mongo_target
-    ports:
-      - "27018:27017"
+    image: mongo:4.4
     networks:
       - mongo-network
-    environment:
-      - MONGODB_USER=admin
-      - MONGODB_PASSWORD=admin
-      - MONGO_INITDB_DATABASE=test
-    healthcheck:
-      test: test $$(echo "rs.initiate().ok || rs.status().ok" | mongo --quiet) -eq 1
-      interval: 10s
-      start_period: 30s
-    command: [ "mongod", "--noauth", "--replSet", "dbrs", "--bind_ip_all" ]
-    volumes:
-      - ./source-data-target:/data/db
-      - ./scripts/mongo_target/init/:/docker-entrypoint-initdb.d
-      - ./scripts/mongo_target/init:/home/mongodb
-      - ./scripts/mongo_target/seed/:/home/mongodb/seed
+    ports:
+      - 27018:27017
+    restart: always
+    entrypoint: [ "/usr/bin/mongod", "--bind_ip_all", "--replSet", "dbrs" ]
 
-  jaeger:
-    image: jaegertracing/all-in-one:1
-    ports:
-      - 6831:6831/udp
-      - 16686:16686
-    networks:
-      - mongo-network
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.3.2
-    hostname: zookeeper
     container_name: zookeeper
-    ports:
-      - 2181:2181
-      - 2888:2888
-      - 3888:3888
-    networks:
-      - mongo-network
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
@@ -79,14 +39,10 @@ services:
   kafka-broker:
     image: confluentinc/cp-kafka:7.3.2
     container_name: broker
-    hostname: broker
     ports:
-      - "29092:29092"
       - "9092:9092"
     depends_on:
       - zookeeper
-    networks:
-      - mongo-network
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
