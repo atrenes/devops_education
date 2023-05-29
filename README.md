@@ -1,24 +1,24 @@
 ### IoT devops education task
 Esoteric scheme:
 ```
---------------------
++------------------+
 | MongoDB (source) |
---------------------
++------------------+
          |
          v
-     ---------
+     +-------+
      | Kafka |
-     ---------
+     +-------+
          |
          V
---------------------
++------------------+
 | MongoDB (target) |
---------------------
++------------------+
 ```
 
-Run:
+Run (start docker containers, automatically use scripts to initiate sample database and data inside a mongo_source node):
 ```shell
-docker compose up -d
+bash ./start.sh
 ```
 
 To connect to mongodb inside a mongo_target/mongo_source container
