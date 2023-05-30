@@ -10,7 +10,7 @@ services:
     networks:
       - mongo-network
     ports:
-      - 27017:27017
+      - "27017:27017"
     depends_on:
       - mongo_target
     links:
@@ -37,6 +37,7 @@ services:
       ZOOKEEPER_SYNC_LIMIT: 2
 
   kafka:
+    container_name: kafka
     image: wurstmeister/kafka
     ports:
       - "9092:9092"
@@ -75,6 +76,16 @@ services:
       CONNECT_INTERNAL_KEY_CONVERTER: org.apache.kafka.connect.json.JsonConverter
       CONNECT_INTERNAL_VALUE_CONVERTER: org.apache.kafka.connect.json.JsonConverter
       CONNECT_ZOOKEEPER_CONNECT: "zookeeper:2181"
+
+  kafka-ui:
+    container_name: kafka-ui
+    image: provectuslabs/kafka-ui:latest
+    ports:
+      - "8080:8080"
+    environment:
+      DYNAMIC_CONFIG_ENABLED: true
+    volumes:
+      - ./scripts/config.yml:/etc/kafkaui/dynamic_config.yaml
 
 
 networks:
