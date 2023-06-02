@@ -77,6 +77,8 @@ services:
       - STATUS_STORAGE_TOPIC=my_connect_statuses
     networks:
       - localnet
+    depends_on:
+      - kafka
 
   kafka-ui:
     container_name: kafka-ui
