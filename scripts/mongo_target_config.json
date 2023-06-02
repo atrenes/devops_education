@@ -1,0 +1,17 @@
+{
+  "name": "mongo-target",
+  "config": {
+    "connector.class":"io.debezium.connector.mongodb.MongoDbConnector",
+    "topic.prefix": "test_",
+    "tasks.max":"1",
+    "topics":"users",
+    "connection.uri":"mongodb://mongo_target:27017,mongo_source:27017",
+    "mongodb.hosts":"mongodb://mongo_target:27017,mongo_source:27017",
+    "database":"test",
+    "collection":"users",
+    "key.converter": "org.apache.kafka.connect.storage.StringConverter",
+    "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "value.converter.schemas.enable": "false",
+    "change.data.capture.handler": "com.mongodb.kafka.connect.sink.cdc.mongodb.ChangeStreamHandler"
+  }
+}

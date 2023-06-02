@@ -1,5 +1,5 @@
 {
-  "name": "mongo-sink",
+  "name": "mongo-source",
   "config": {
     "connector.class":"io.debezium.connector.mongodb.MongoDbConnector",
     "topic.prefix": "test",
