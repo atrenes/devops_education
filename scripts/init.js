@@ -1,5 +1,10 @@
+// ------- check if mongo is in replicaSet mode -------
+
 rs.status();
 db.createCollection('users');
+
+// ------- this is some sample data -------
+
 db.users.insertMany(
     [
         {
