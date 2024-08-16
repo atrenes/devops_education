@@ -18,13 +18,12 @@ Esoteric scheme:
 
 **Requirements:** `docker compose`, `Linux/MacOS/wsl`
 
-> Run (start docker containers, automatically use scripts to initiate sample database and data inside a mongo_source 
-> node, make sure that both kafka and debezium are up, then insert mongodb connection parameters to debezium via two 
-> POST requests: for source and target mongos):
+Run (start docker containers, automatically use scripts to initiate sample database and data inside a mongo_source node, make sure that both kafka and debezium are up, then insert mongodb connection parameters to debezium via two POST requests: for source and target mongos):
 ```shell
 bash ./start.sh
 ```
-> After everything is set up, KafkaUI with all topics is available at `localhost:8080`
+After everything is set up, KafkaUI with all topics is available at `localhost:8080`
+
 ---
 To connect to mongodb inside a mongo_target/mongo_source container
 ```shell
